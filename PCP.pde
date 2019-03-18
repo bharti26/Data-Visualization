@@ -83,10 +83,7 @@ class PCP extends Frame {
     for( PCPAxis a : axes ){
        if( a.mouseInside() ){
          a.selected = true;
-         barFrame1 = new barplot( table, 0,a.attr );
-          //barFrame2 = new barplot( table, 0,a.attr );
-           barFrame3 = new barplot( table, 0,a.attr );
-            barFrame4 = new barplot( table, 0,a.attr );
+         barFrame = new barplot( table, 0,a.attr );
         lineFrame = new lineplot( table, 0, a.attr);
         if(a.attr>0)
         scatterFrame = new Scatterplot( table, a.attr,a.attr-1 );

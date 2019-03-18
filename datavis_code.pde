@@ -1,18 +1,11 @@
 
 Frame PCPFrame = null;
-Frame barFrame1 = null;
-Frame barFrame2 = null;
-Frame barFrame3 = null;
-Frame barFrame4 = null;
-Frame lineFrame = null;
 Frame barFrame = null;
+Frame lineFrame = null;
 Frame scatterFrame = null;
-Frame meanplotFrame = null;
 Frame splomFrame = null;
-Frame meanFrame = null;
 Table table;
 int selectp=-1;
-float bin= 20;
 
 void setup(){
   size(1200,800);  
@@ -39,18 +32,9 @@ void fileSelected(File selection) {
     }
     PCPFrame = new PCP( table, useColumns );
     scatterFrame = new Scatterplot( table, 0,1 );
-     scatterFrame = new Scatterplot( table, 0,1 );
-    barFrame = new barchart( table, 0,0 );
-    lineFrame = new lineplot( table, 0,0 );
-    barFrame1 = new barplot( table, 0,0 );
-    barFrame2 = new barplot( table, 0,1 );
-    barFrame3 = new barplot( table, 0,2 );
-    barFrame4 = new barplot( table, 0,3 );
-    
+    barFrame = new barplot( table, 0,0 );
     lineFrame = new lineplot( table, 0,0 );
     splomFrame= new Splom( table, useColumns );
-    meanplotFrame= new meanplot(table,0,1);
-    meanFrame= new meanlom( table, useColumns );
     
     
   }
@@ -63,33 +47,25 @@ void draw(){
   if( table == null ) 
     return;
   
-  if( barFrame1 != null ){
-       barFrame1.setPosition( 0, 0, 300, 400 );
-       barFrame1.draw();
+   if( scatterFrame != null ){
+       scatterFrame.setPosition( 0, 0, 400, 400 );
+       scatterFrame.draw();
   }
-  if( barFrame2 != null ){
-       barFrame2.setPosition( 300, 0, 300, 400 );
-       barFrame2.draw();
+  
+  if( barFrame != null ){
+       barFrame.setPosition( 400, 0, 400, 400 );
+       barFrame.draw();
   }
   if( lineFrame != null ){
-       lineFrame.setPosition( 600, 0, 300, 400 );
+       lineFrame.setPosition( 800, 0, 400, 400 );
        lineFrame.draw();
   }
-   if( barFrame != null ){
-       barFrame.setPosition( 900, 0, 300, 400 );
-       barFrame.draw();
-   }
-  
   if( splomFrame != null ){
        splomFrame.setPosition( 0, 400, 400, 400 );
        splomFrame.draw();
   }
-  if( meanFrame != null ){
-       meanFrame.setPosition( 400, 400, 400, 400 );
-       meanFrame.draw();
-  }
    if( PCPFrame != null ){
-       PCPFrame.setPosition( 800, 400, 400, 400 );
+       PCPFrame.setPosition( 400, 400, 800, 400 );
        PCPFrame.draw();
   }
   if(mouseY>800 || mouseX>width)
@@ -99,7 +75,6 @@ void draw(){
 void mousePressed(){
   PCPFrame.mousePressed();
   splomFrame.mousePressed();
-  meanFrame.mousePressed();
 }
 
 void mouseReleased(){

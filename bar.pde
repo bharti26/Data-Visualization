@@ -1,15 +1,12 @@
 class barplot extends Frame {
-  float[][] mat = new float[3][int(bin)]; 
-  int selectpp=-1;
+   
   float minX, maxX;
   float minY, maxY;
   int idx0, idx1;
-  int border = 30;
+  int border = 40;
   boolean drawLabels = true;
   float spacer = 5;
-   float max=0;
-   float mean=0;
-  int wid=(w-2*border)/int(bin);
+  int wid=(w-2*border)/table.getRowCount();
   
    barplot( Table data, int idx0, int idx1 ){
      
@@ -29,45 +26,28 @@ class barplot extends Frame {
    }
    
    void draw(){
-    
-     float binSize= (maxY-minY)/bin;
-     for(int b=0;b<bin;b++){
-       float freq=0; 
-       mat[0][b]=minY+binSize*(b);
-       mat[1][b]=minY+binSize*(b+1);
-       for( int i = 0; i < table.getRowCount(); i++ ){
-          TableRow r = table.getRow(i);
+     
+     for( int i = 0; i < table.getRowCount(); i++ ){
+        TableRow r = table.getRow(i);
         
-          //float x = map( float(b), 0, bin, u0+border+spacer, u0+w-border-spacer );
-          //float y = map( r.getFloat(idx1), minY, maxY, v0+border,v0+h-border );
-          if (r.getFloat(idx1)>=minY+binSize*b && r.getFloat(idx1)<minY+binSize*(b+1)){
-            freq=freq+1;
-          }
-        
-     }
-     if (max<freq)
-       max=freq;
-     mat[2][b]=freq;
-     mean=mean+mat[2][b];
-     }
-     mean=mean/bin;
-     for(int b=0;b<bin;b++){     
-       //println(freq);
-        float x = map( float(b), 0, bin, u0+border+spacer, u0+w-border-spacer );
-        float y = map( mat[2][b], 0, max, v0+border,v0+h-border );
+        float x = map( float(i), 0, table.getRowCount(), u0+border+spacer, u0+w-border-spacer );
+        float y = map( r.getFloat(idx1), minY, maxY, v0+border,v0+h-border );
         stroke( 0 );
-        float std=y-mean;
-        if(std<1) std=std*-1;
-        fill(0+std/2,0+std/2,0+std/2);
-        if(mouseX>x-3 && mouseX<x+3 && mouseY>v0+border && mouseY<v0+h-border )
-        {//selectpp=b;
-        stroke(#000000);
-        fill(#FF0000);
-        text(mat[0][b]+","+mat[1][b] ,x,v0+h-y,CENTER);
-        
+        fill(255,0,0);
+        if(mouseX>x && mouseX<x+1 && mouseY>v0+border && mouseY<v0+h-border )
+        {selectp=i;
+        //println("selectp");
       }
-        else stroke(0);
-        rect(x-wid,v0+h-y,3*wid,y-border);
+        if(i==selectp) {
+          stroke(#ff0000);
+           //fill(#FFADAA);
+          text(r.getFloat(idx1),x,v0+h-y,CENTER);
+        }
+         else stroke(0);
+        rect(x,v0+h-y,wid,y-border);
+        
+        //ellipse( x,y,3,3 );
+        
      }
      
      stroke(0);
@@ -76,11 +56,15 @@ class barplot extends Frame {
      
      if( drawLabels ){
        fill(0);
+       //text( table.getColumnTitle(idx0), u0+w/2, v0+h-10 );
+       //pushMatrix();
+       //translate( 400+10, v0+h/2 );
+       //rotate( 3*PI/2 );
        text( table.getColumnTitle(idx1), u0+w/2+border/2,v0+border,CENTER);
-       text( int(0), u0+border, v0+h-border );
-       text( int(max), u0+border, v0+border+10);
+       text( int(minY), u0+border, v0+h-border );
+       text( int(maxY), u0+border, v0+border+10);
        text( "0", u0+border+5, v0+h-5-border/2);
-       text( int(bin), u0+w-border+5, v0+h-5-border/2);
+       text( table.getRowCount(), u0+w-border+5, v0+h-5-border/2);
 
        //popMatrix();
      }
