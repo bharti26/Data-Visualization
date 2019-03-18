@@ -7,8 +7,8 @@ class ForceDirectedLayout extends Frame {
   
   
   float RESTING_LENGTH = 10.0f;   // update this value
-  float SPRING_SCALE   = 0.01f; // update this value
-  float REPULSE_SCALE  = 400.0f;  // update this value
+  float SPRING_SCALE   = 0.1f; // update this value
+  float REPULSE_SCALE  = 100.0f;  // update this value
 
   float TIME_STEP      = 0.5f;    // probably don't need to update this
 
@@ -32,14 +32,13 @@ class ForceDirectedLayout extends Frame {
      float m0=v0.mass;
      float m1=v1.mass;
      float d= dist(p0.x,p0.y,p1.x,p1.y);
-     float Rfrc= REPULSE_SCALE*m0*m1/d;
-     float frcx0= Rfrc*(p0.x-p1.x)/sqrt(d);
-     float frcy0= Rfrc*(p0.y-p1.y)/sqrt(d);
+     //float Rfrc= REPULSE_SCALE*m0*m1/d;
+     
      //println(frcx0);
-     v0.addForce(frcx0,frcy0);
+     //v0.addForce(frcx0,frcy0);
       //Rfrcx= REPULSE_SCALE*m0*m1/(p1.x-p0.x);
       //Rfrcy= REPULSE_SCALE*m0*m1/(p1.y-p0.y);
-     v1.addForce(-frcx0,-frcy0 );
+     //v1.addForce(frcx0,frcy0 );
      
      
   }
@@ -52,24 +51,22 @@ class ForceDirectedLayout extends Frame {
     float len= edge.getSpringLength();
     float d= sqrt(dist(p0.x,p0.y,p1.x,p1.y));
     
-    float Sfrc=SPRING_SCALE*max(0,(d-RESTING_LENGTH));
-    float Sfrcx0=Sfrc*(p1.x-p0.x)/d;
-    float Sfrcy0=Sfrc*(p1.y-p0.y)/d;    //edge.v1.addForce( Sfrc,Sfrc);
-    edge.v0.addForce( Sfrcx0,Sfrcy0 );
+    float Sfrcx0=SPRING_SCALE*((p0.x-p1.x)-RESTING_LENGTH);
+    float Sfrcy0=SPRING_SCALE*((p0.y-p1.y)-RESTING_LENGTH);
+    //edge.v1.addForce( Sfrc,Sfrc);
+    edge.v1.addForce( Sfrcx0,Sfrcy0 );
     
     
-    //float Sfrcx1=SPRING_SCALE*((p1.x-p0.x)-RESTING_LENGTH);
-    //float Sfrcy1=SPRING_SCALE*((p1.y-p0.y)-RESTING_LENGTH);
-    //float Sfrcx1=SPRING_SCALE*max(0,(p1.x-p0.x)-RESTING_LENGTH);
-    //float Sfrcy1=SPRING_SCALE*max(0,(p1.y-p0.y)-RESTING_LENGTH);
+    float Sfrcx1=SPRING_SCALE*((p1.x-p0.x)-RESTING_LENGTH);
+    float Sfrcy1=SPRING_SCALE*((p1.y-p0.y)-RESTING_LENGTH);
     
     //edge.v1.addForce( Sfrc,Sfrc);
-    edge.v1.addForce( -Sfrcx0,-Sfrcy0 );
+   // edge.v0.addForce( Sfrcx1,Sfrcy1 );
     //println("Sfrc");
   }
 
   void draw() {
-    update(); // don't modify this line  
+     // don't modify this line  
     for ( GraphEdge e : edges ) {
       GraphVertex n1= e.v0;
        //PVector p1=null,p2=null;
@@ -79,7 +76,7 @@ class ForceDirectedLayout extends Frame {
       
       PVector p2=n2.getPosition();
       stroke(0); 
-      strokeWeight(2);
+      strokeWeight(0.5);
      // if(n1!=null && n2!=null ){
       line(p1.x,p1.y,p2.x,p2.y); 
     }
@@ -89,14 +86,13 @@ class ForceDirectedLayout extends Frame {
           mouseX=0;
         if(mouseY<0)
           mouseY=0;
+          
       v.setPosition(mouseX%w,mouseY%h);
-      fill(0);
+     fill(0);
     text(v.getID(),mouseX+v.diam/2,mouseY+v.diam/2);}
       //selected=null;
       PVector p=v.getPosition();
-      //text(v.getID(),p.x,p.y);   
-
-      stroke(255);
+      stroke(0);
       strokeWeight(1);
       fill(0);
       for(int i=0;i<=10;i++){
@@ -105,7 +101,11 @@ class ForceDirectedLayout extends Frame {
       }
      
       ellipse(p.x,p.y,v.getDiameter(),v.getDiameter()); 
+      fill(0);
+      //text(v.getID(),p.x+v,p.y);
     }
+    delay(30);
+    update();
     // TODO: ADD CODE TO DRAW THE GRAPH
     
   }
@@ -114,9 +114,7 @@ class ForceDirectedLayout extends Frame {
 
   void mousePressed() { 
     for ( GraphVertex v : verts ) {
-      
       PVector p=v.getPosition();
-      
      // if(p.x+(v.getDiameter())<  mouseX && p.y+(v.getDiameter())<  mouseY && p.x-(v.getDiameter())>  mouseX && p.y-(v.getDiameter())>  mouseY)
       //if((p.x-mouseX)<10 && (p.x-mouseX)>-20 && (p.y-mouseY)<10 && (p.y-mouseY)<-20 )
       if(isHit(p.x,p.y))
@@ -146,23 +144,28 @@ boolean isHit(float x, float y) {
   // project (and I recommend against modifying it).
   void update() {
     for ( GraphVertex v : verts ) {
-      v.clearForce();
+      v.getNum();
+      float x= map((float)output[0][v.getNum()], min(outputf[0]),max(outputf[0]),border,w-100);
+      float y= map((float)output[1][v.getNum()], min(outputf[1]),max(outputf[1]),h-100,border);
+      //println(x+","+y);
+      v.setPosition(x,y);
+      //delay(30);
     }
 
-    for ( GraphVertex v0 : verts ) {
+    /*for ( GraphVertex v0 : verts ) {
       for ( GraphVertex v1 : verts ) {
-        if ( v0 != v1 ) applyRepulsiveForce( v0, v1 );
+        //if ( v0 != v1 ) applyRepulsiveForce( v0, v1 );
       }
     }
 
     for ( GraphEdge e : edges ) {
-      applySpringForce( e );
+      //applySpringForce( e );
     }
 
     for ( GraphVertex v : verts ) {
-      v.updatePosition( TIME_STEP );
+      //v.updatePosition( TIME_STEP );
       //println(v);
-    }
+    }*/
   }
   
   float dist(float x0, float y0, float x1, float y1){

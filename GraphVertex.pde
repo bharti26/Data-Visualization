@@ -14,15 +14,17 @@ public class GraphVertex {
   float mass = 1;
   float diam = 20;
   int group;
+  int num;
 
-  public GraphVertex( String _id, int _group, float _x, float _y ){
+  public GraphVertex( String _id, int _group, float _x, float _y,int _num ){
     id = _id;
+    num=_num;
     group = _group;
     pos.set(_x,_y);
   }
 
   public String getID(){ return id; }
-
+  public int   getNum( ){ return num; }
   public void    setPosition( float _x, float _y ){ pos.set(_x,_y); }
   public PVector getPosition(){ return pos; }
 
